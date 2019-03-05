@@ -14,7 +14,7 @@ def key_to_frequency(key):
 def key_to_note(key, octaves=True):
     """Returns a string representing a note which is (key) keys from A0"""
     notes = ['a', 'a#', 'b', 'c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#']
-    octave = (key + 8) / 12
+    octave = (key + 8) // 12
     note = notes[(key - 1) % 12]
 
     if octaves:
@@ -72,10 +72,10 @@ def b_return(output, t):
         elif t.lower() == "tuple":
             return tuple([i for i in output])
         elif t.lower() == "dict":
-            O = {}
+            o = {}
             for i in range(len(output)):
-                O[i] = output[i]
-            return O
+                o[i] = output[i]
+            return o
         elif t.lower() == "string":
             return ''.join(output)
         elif t.lower() == "stringspace":
@@ -92,12 +92,11 @@ def iterate(start, pattern, r_type="list", octaves=True):
     """Iterates over a pattern starting at a given note"""
     start_key = note_to_key(start)
     ret = [start_key]
+
     for step in pattern:
         ret.append(ret[-1] + step)
-
     for i, item in enumerate(ret):
         ret[i] = key_to_note(ret[i], octaves)
-
     return b_return(ret, r_type)
 
 # Licensed under The MIT License (MIT)

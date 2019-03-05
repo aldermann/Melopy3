@@ -6,6 +6,7 @@ from .utility import iterate
 
 SCALE_STEPS = {
     "major": [2, 2, 1, 2, 2, 2, 1],
+    "minor": [2, 1, 2, 2, 1, 2, 2],
     "melodic_minor": [2, 1, 2, 2, 2, 2, 1],
     "harmonic_minor": [2, 1, 2, 2, 2, 1, 2],
     "chromatic": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],

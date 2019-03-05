@@ -1,5 +1,7 @@
-from melopy import Melopy
 import os
+
+from melopy import Melopy
+
 
 def main():
     m = Melopy('furelise')
@@ -9,6 +11,8 @@ def main():
     else:
         m.parsefile('scores/furelise.mlp')
     m.render()
+    m.play()
+
 
 if __name__ == '__main__':
     main()

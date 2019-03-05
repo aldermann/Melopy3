@@ -17,7 +17,6 @@ def open_file(filename):
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filename])
-    exit()
 
 
 # same included wave functions

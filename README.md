@@ -9,18 +9,19 @@ A python library for playing with sound.<br />
 
 You may need to use `sudo` for this to work.
 
-    $ pip install melopy
+    $ pip install Melopy3
 
 ### Load it
 
-```python
-$ python
-Python 2.7.2 (default, Jun 20 2012, 16:23:33)
-[GCC 4.2.1 Compatible Apple Clang 4.0 (tags/Apple/clang-418.0.60)] on darwin
+```python3
+$ python3
+Python 3.6.7 (default, Oct 22 2018, 11:32:17) 
+[GCC 8.2.0] on linux
 Type "help", "copyright", "credits" or "license" for more information.
+
 >>> import melopy
->>> melopy.major_scale('C5')
-['C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5']
+>>> melopy.generate_scale('major', 'C5')
+['C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6']
 >>>
 ```
 
@@ -28,18 +29,19 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 To install locally:
 
-    $ git clone git://github.com/jdan/Melopy
+    $ git clone git://github.com/aldermann/Melopy
     $ cd Melopy
-    $ python setup.py install
+    $ python3 setup.py install
 
 For examples, check out the `examples` directory:
 
-    $ python examples/canon.py
-    $ python examples/parser.py entertainer < examples/scores/entertainer.mlp
+    $ python3 -m examples.canon
+
+We have to execute the file as a module, or else it won't work in Python 3
 
 To run the tests:
 
-    $ python tests/melopy_tests.py
+    $ python3 tests/melopy_tests.py
 
 ### Organization
 
@@ -53,7 +55,7 @@ Melopy is broken down into 3 subcategories - `melopy`, `scales`, and `utility`.
 
 ### melopy.py
 
-```python
+```python3
 >>> from melopy import Melopy
 >>> m = Melopy('mysong')
 >>> m.add_quarter_note('A4')
@@ -62,34 +64,33 @@ Melopy is broken down into 3 subcategories - `melopy`, `scales`, and `utility`.
 >>> m.render()
 [==================================================] 100%
 Done
+>>> m.play()
 ```
 
 ### scales.py
+The following scales can be generated
+* major
+* minor (natural minor)
+* harmonic_minor
+* melodic_minor
+* major_pentatonic
+* minor_pentatonic
+* chromatic
 
-* chromatic_scale
-* harmonic_minor_scale
-* major_pentatonic_scale
-* major_scale
-* minor_scale
-* major_triad
-* minor_triad
-* melodic_minor_scale
-* minor_pentatonic_scale
+```python3
+>>> from melopy.scales import generate_scale
+>>> generate_scale('major', 'C4')
+['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5']
 
-```python
->>> from melopy.scales import *
->>> major_scale('C4')
-['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']
 >>> major_scale('C4','dict')
-{0: 'C4', 1: 'D4', 2: 'E4', 3: 'F4', 4: 'G4', 5: 'A4', 6: 'B4'}
->>> major_scale('C4','tuple')
-('C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4')
->>> minor_scale('D#5')  # has some bugs
-['D#5', 'F5', 'F#5', 'G#5', 'A#5', 'B5', 'C#6']
->>> major_triad('A4')
-['A4', 'C#5', 'E5']
->>> major_triad('A4', 'tuple')
-('A4', 'C#5', 'E5')
+{0: 'C4', 1: 'D4', 2: 'E4', 3: 'F4', 4: 'G4', 5: 'A4', 6: 'B4', 7: 'C5'}
+
+>>> generate_scale("major", "C4", r_type="tuple")
+('C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5')
+>>> generate_scale("minor", "D#5")
+['D#5', 'F5', 'F#5', 'G#5', 'A#5', 'B5', 'C#6', 'D#6']
+>>> generate_scale("major_pentatonic", "E4")
+['E4', 'F#4', 'G#4', 'B4', 'C#5']
 ```
 
 ### utility.py
@@ -101,7 +102,7 @@ Done
 * frequency_to_key
 * frequency_to_note
 
-```python
+```python3
 >>> from melopy.utility import *
 >>> key_to_frequency(49)
 440.0

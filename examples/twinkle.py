@@ -6,10 +6,9 @@ import sys; sys.path.append(sys.path[0] + '/../melopy/')
 from melopy import *
 
 if __name__ == "__main__":
-    song = Melopy('twinkle', 50)
+    song = Melopy('twinkle', 50, wave_type="square")
 
     song.tempo = 160
-    song.wave_type = square
 
     part1notes = ['C', 'G', 'A', 'G', 'F', 'E', 'D', 'C']
     part2notes = ['G', 'F', 'E', 'D']
@@ -28,6 +27,7 @@ if __name__ == "__main__":
     twinkle(part1notes)
 
     song.render()
+    song.play()
 
 # Licensed under The MIT License (MIT)
 # See LICENSE file for more
