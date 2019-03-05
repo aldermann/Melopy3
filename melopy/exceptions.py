@@ -1,2 +1,6 @@
-class MelopyGenericError(Exception): pass
-class MelopyValueError(ValueError): pass
+class MelopyGenericError(Exception):
+    pass
+
+
+class MelopyValueError(ValueError):
+    pass

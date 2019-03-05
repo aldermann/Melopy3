@@ -1,20 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import wave, struct, random, math
-import os, sys
+import math
+import os
+import struct
+import subprocess
+import sys
+import wave
 
-from utility import *
-from scales  import *
+from .utility import *
+
+
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
+    exit()
+
 
 # same included wave functions
 # a function of frequency and tick
 #   each function accepts the frequency and tick,
 #   and returns a value from -1 to 1
 
-sine     = lambda f, t: math.sin(2 * math.pi * t * f / 44100.0)
-square   = lambda f, t: 0.6 * ((t % (44100 / f) >= ((44100 / f)/2)) * 2 - 1)
-sawtooth = lambda f, t: (t % (44100 / f)) / (44100 / f) * 2 - 1
 def triangle(f, t):
     v = 2 * (t % (44100 / f)) / (44100 / f)
     if t % (44100 / f) >= (44100 / (2 * f)):
@@ -22,8 +32,22 @@ def triangle(f, t):
     v = 2 * v - 1
     return v
 
+
+def piano(f, t):
+    return math.sin(math.pi * t * f / 44100.0) ** 3 + math.sin(math.pi * (t * f / 44100 + 2 / 3))
+
+
+wave_list = {
+    "sine": lambda f, t: math.sin(2 * math.pi * t * f / 44100.0),
+    "square": lambda f, t: 0.6 * ((t % (44100 / f) >= ((44100 / f) / 2)) * 2 - 1),
+    "sawtooth": lambda f, t: (t % (44100 / f)) / (44100 / f) * 2 - 1,
+    "triangle": triangle,
+    "piano": piano
+}
+
+
 class Melopy:
-    def __init__(self, title='sound', volume=20, tempo=120, octave=4):
+    def __init__(self, title='sound', volume=20, tempo=120, octave=4, wave_type="sine"):
         self.title = title.lower()
         self.rate = 44100
         self.volume = volume
@@ -31,20 +55,20 @@ class Melopy:
 
         self.tempo = tempo
         self.octave = octave
-        self.wave_type = sine
+        self.wave_type = wave_list[wave_type]
 
     def add_wave(self, frequency, length, location='END', level=None):
         if location == 'END':
             location = len(self.data)
-        elif location < 0:
+        elif float(location) < 0:
             location = 0
-        elif location * 44100 > len(self.data):
+        elif float(location) * 44100 > len(self.data):
             location = len(self.data) / 44100.0
 
         # location is a time, so let's adjust
         location = int(location * 44100)
 
-        if level == None:
+        if level is None:
             level = self.volume
         elif level > 100:
             level = 100
@@ -78,14 +102,14 @@ class Melopy:
 
         if not isinstance(volume, list):
             volume = [volume]
-        if volume[0] == None:
-            volume = [float(self.volume)/len(note)] * len(note)
-            #By default, when adding a chord, set equal level for each
-            #component note, such that the sum volume is self.volume
+        if volume[0] is None:
+            volume = [float(self.volume) / len(note)] * len(note)
+            # By default, when adding a chord, set equal level for each
+            # component note, such that the sum volume is self.volume
         else:
-            volume = volume + [volume[-1]]*(len(note) - len(volume))
-            #Otherwise, pad volume by repeating the final level so that we have
-            #enough level values for each note
+            volume = volume + [volume[-1]] * (len(note) - len(volume))
+            # Otherwise, pad volume by repeating the final level so that we have
+            # enough level values for each note
 
         for item, level in zip(note, volume):
             if not item[-1].isdigit():
@@ -155,10 +179,10 @@ class Melopy:
                 self.parse(track, t)
             return
 
-        cf = 0.25                    # start with a quarter note, change accordingly
+        cf = 0.25  # start with a quarter note, change accordingly
         in_comment = False
 
-        for i, char in enumerate(string):        # divide melody into fragments
+        for i, char in enumerate(string):  # divide melody into fragments
             # / this is a comment /
             if char == '/':
                 in_comment = not in_comment
@@ -166,10 +190,10 @@ class Melopy:
             if in_comment:
                 continue
             elif char in 'ABCDEFG':
-                if (i+1 < len(string)) and (string[i+1] in '#b'):
+                if (i + 1 < len(string)) and (string[i + 1] in '#b'):
                     # check if the next item in the array is
                     #    a sharp or flat, make sure we include it
-                    char += string[i+1]
+                    char += string[i + 1]
 
                 self.add_fractional_note(char, cf, location)
                 if location != 'END':
@@ -206,23 +230,27 @@ class Melopy:
         for i in range(len(self.data)):
             q = 100 * i / len(self.data)
             if p != q:
-                sys.stdout.write("\r[%s] %d%%" % (('='*int((float(i)/len(self.data)*50))+'>').ljust(50), 100 * i / len(self.data)))
+                sys.stdout.write("\r[%s] %d%%" % (
+                    ('=' * int((float(i) / len(self.data) * 50)) + '>').ljust(50), 100 * i / len(self.data)))
                 sys.stdout.flush()
                 p = q
             packed_val = struct.pack('h', int(self.data[i]))
             data_frames.append(packed_val)
             data_frames.append(packed_val)
 
-        melopy_writer.writeframes(''.join(data_frames))
+        melopy_writer.writeframes(b''.join(data_frames))
 
-        sys.stdout.write("\r[%s] 100%%" % ('='*50))
+        sys.stdout.write("\r[%s] 100%%" % ('=' * 50))
         sys.stdout.flush()
         sys.stdout.write("\nDone\n")
         melopy_writer.close()
 
     def play(self):
         """Opens the song in the os default program"""
-        os.startfile(self.title + '.wav')
+        open_file(self.title + '.wav')
+
+    def create(self):
+        self.render()
 
 # Licensed under The MIT License (MIT)
 # See LICENSE file for more

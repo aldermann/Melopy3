@@ -4,14 +4,14 @@
 from distutils.core import setup
 
 config = {
-    'name': 'Melopy',
-    'author': 'Jordan Scales',
-    'author_email': 'scalesjordan@gmail.com',
+    'name': 'Melopy3',
+    'author': 'Aldermann',
+    'author_email': 'vietanisme@gmail.com',
     'description': 'Python music library',
     'long_description': open('README.txt').read(),
     'packages': ['melopy'],
     'version': '0.1.1',
-    'url': 'https://github.com/jdan/Melopy',
+    'url': 'https://github.com/aldermann/Melopy3',
     'license': 'LICENSE.txt',
     'classifiers': []
 }
