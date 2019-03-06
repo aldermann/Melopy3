@@ -219,7 +219,7 @@ class Melopy:
 
         self.parse(s, location)
 
-    def render(self):
+    def render(self, print_progress=True):
         """Render a playable song out to a .wav file"""
         melopy_writer = wave.open(self.title + '.wav', 'w')
         melopy_writer.setparams((2, 2, 44100, 0, 'NONE', 'not compressed'))
@@ -229,9 +229,10 @@ class Melopy:
         for i in range(len(self.data)):
             q = 100 * i / len(self.data)
             if p != q:
-                sys.stdout.write("\r[%s] %d%%" % (
+                if print_progress:
+                    sys.stdout.write("\r[%s] %d%%" % (
                     ('=' * int((float(i) / len(self.data) * 50)) + '>').ljust(50), 100 * i / len(self.data)))
-                sys.stdout.flush()
+                    sys.stdout.flush()
                 p = q
             packed_val = struct.pack('h', int(self.data[i]))
             data_frames.append(packed_val)
@@ -239,8 +240,9 @@ class Melopy:
 
         melopy_writer.writeframes(b''.join(data_frames))
 
-        sys.stdout.write("\r[%s] 100%%" % ('=' * 50))
-        sys.stdout.flush()
+        if print_progress:
+            sys.stdout.write("\r[%s] 100%%" % ('=' * 50))
+            sys.stdout.flush()
         sys.stdout.write("\nDone\n")
         melopy_writer.close()
 
