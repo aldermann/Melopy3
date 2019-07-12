@@ -8,9 +8,10 @@ config = {
     'author': 'Aldermann',
     'author_email': 'vietanisme@gmail.com',
     'description': 'Python music library',
-    'long_description': open('README.txt').read(),
+    'long_description': open('README.md').read(),
+    'long_description_content_type': 'text/markdown',
     'packages': ['melopy'],
-    'version': '0.1.2',
+    'version': '0.1.2.5',
     'url': 'https://github.com/aldermann/Melopy3',
     'license': 'LICENSE.txt',
     'classifiers': []

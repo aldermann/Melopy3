@@ -2,9 +2,9 @@
 
 http://jdan.github.io/Melopy
 
-A python library for playing with sound.<br />
+A python library for playing with sound.  
 *by [Jordan Scales](http://jordanscales.com) and friends*
-
+*made compatible to python3 by aldermann*
 ### Install it
 
 You may need to use `sudo` for this to work.
